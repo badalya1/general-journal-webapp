@@ -1,32 +1,37 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
+    <transition name="fade" mode="out-in">
+      <div v-if="isLoggedIn" key="app">
+        <nav-bar @logout="isLoggedIn = false" />
+        <transition name="fade" mode="out-in">
+          <router-view :key="$route.name" />
+        </transition>
+      </div>
+      <login v-else @login="isLoggedIn = true" key="login"></login>
+    </transition>
   </div>
 </template>
 
+<script lang="ts">
+import { defineComponent, ref } from "@vue/composition-api";
+import Login from "./views/Login.vue";
+import NavBar from "./components/NavBar.vue";
+
+export default defineComponent({
+  name: "app",
+
+  components: {
+    Login,
+    NavBar,
+  },
+
+  setup() {
+    const isLoggedIn = ref(false);
+    return { isLoggedIn };
+  },
+});
+</script>
+
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
+@import "./style/main.scss";
 </style>
